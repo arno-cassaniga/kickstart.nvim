@@ -32,25 +32,50 @@ return {
 
       -- You can provide additional configuration to the handlers,
       -- see mason-nvim-dap README for more information
-      handlers = {},
+      handlers = {
+        coreclr = function(config)
+          --tem que ajustar essa bosta
+          -- https://github.com/jay-babu/mason-nvim-dap.nvim/blob/main/lua/mason-nvim-dap/mappings/configurations.lua
+          local problematic_config = vim.tbl_filter(function(it)
+            return it.name == "NetCoreDbg: Launch"
+          end, config.configurations)[1]
+
+          if not problematic_config then
+            error("where is the problematic config?")
+          end
+
+          problematic_config.cwd = "${workspaceFolder}"
+          problematic_config.program = function ()
+            local p = vim.fn.input({ prompt = "DLL:", completion = "file" })
+            if not p or string.len(p) < 1 then
+              error("nevermind then...")
+            end
+            return p
+          end
+
+          require('mason-nvim-dap').default_setup(config)
+        end
+      },
 
       -- You'll need to check that you have the required things installed
       -- online, please don't ask me how to install them :)
       ensure_installed = {
         -- Update this to ensure that you have the debuggers for the langs you want
         'delve',
+        'netcoredbg'
       },
     }
 
     -- Basic debugging keymaps, feel free to change to your liking!
     vim.keymap.set('n', '<F5>', dap.continue)
+    vim.keymap.set('n', '<F8>', dap.terminate)
     vim.keymap.set('n', '<F1>', dap.step_into)
     vim.keymap.set('n', '<F2>', dap.step_over)
     vim.keymap.set('n', '<F3>', dap.step_out)
-    vim.keymap.set('n', '<leader>b', dap.toggle_breakpoint)
+    vim.keymap.set('n', '<leader>b', dap.toggle_breakpoint, { desc = "Toggle [B]reakpoint" })
     vim.keymap.set('n', '<leader>B', function()
       dap.set_breakpoint(vim.fn.input 'Breakpoint condition: ')
-    end)
+    end, { desc = "[B]reakpoint condition (alternative 'b')" })
 
     -- Dap UI setup
     -- For more information, see |:help nvim-dap-ui|
