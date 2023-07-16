@@ -109,6 +109,7 @@ require('lazy').setup({
 
       -- Adds a number of user-friendly snippets
       'rafamadriz/friendly-snippets',
+      'hrsh7th/cmp-nvim-lsp-signature-help',
     },
   },
 
@@ -193,9 +194,6 @@ require('lazy').setup({
     -- Theme inspired by Atom
     'navarasu/onedark.nvim',
     priority = 1000,
-    config = function()
-      vim.cmd.colorscheme 'onedark'
-    end,
   },
 
   {
@@ -205,7 +203,7 @@ require('lazy').setup({
     opts = {
       options = {
         icons_enabled = false,
-        theme = 'onedark',
+        -- theme = 'onedark',
         component_separators = '|',
         section_separators = '',
       },
@@ -258,7 +256,7 @@ require('lazy').setup({
   --       These are some example plugins that I've included in the kickstart repository.
   --       Uncomment any of the lines below to enable them.
   -- require 'kickstart.plugins.autoformat',
-  -- require 'kickstart.plugins.debug',
+  require 'kickstart.plugins.debug',
 
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
   --    You can use this folder to prevent any conflicts with this init.lua if you're interested in keeping
@@ -266,7 +264,7 @@ require('lazy').setup({
   --    Uncomment the following line and add your plugins to `lua/custom/plugins/*.lua` to get going.
   --
   --    For additional information see: https://github.com/folke/lazy.nvim#-structuring-your-plugins
-  -- { import = 'custom.plugins' },
+  { import = 'custom.plugins' },
 }, {})
 
 -- [[ Setting options ]]
@@ -312,6 +310,57 @@ vim.o.termguicolors = true
 
 -- [[ Basic Keymaps ]]
 
+-- these are MY KEYMAPS
+vim.keymap.set({ 'n' }, '<leader>tt', '<Cmd>NvimTreeFindFileToggle<cr>', { desc = '[T]oggles Nvim[T]ree focusing the file' })
+vim.keymap.set({ 'n' }, '<leader>to', '<Cmd>NvimTreeToggle<cr>', { desc = 'Toggles Nvim[T]ree but only [O]pens it' })
+
+vim.keymap.set({ 'n' }, '<leader>py', '<Cmd>let @+ = expand("%:t")<cr>', { desc = '[P]ath [y]anking to clipboard' })
+vim.keymap.set({ 'n' }, '<leader>pY', '<Cmd>let @+ = expand("%")<cr>', { desc = '[P]ath [Y]anking (full) to clipboard' })
+
+vim.keymap.set({ 'n' }, 'gp', '`[v`]', { desc = '[G]o to last [P]asted text in visual mode' })
+vim.keymap.set({ 'i' }, '<C-j>', '<C-[>', { desc = 'Exit INSERT mode' })
+
+vim.keymap.set({ 'n' }, '<C-h>a', require("harpoon.mark").add_file, { desc = '[H]arpoon [A]dd file' })
+vim.keymap.set({ 'n' }, '<C-h>h', require("harpoon.ui").toggle_quick_menu, { desc = '[H]arpoon Open' })
+vim.keymap.set({ 'n' }, '<C-h>j', function() require("harpoon.ui").nav_file(1) end, { desc = '[H]arpoon: Nav 1' })
+vim.keymap.set({ 'n' }, '<C-h>k', function() require("harpoon.ui").nav_file(2) end, { desc = '[H]arpoon: Nav 2' })
+vim.keymap.set({ 'n' }, '<C-h>l', function() require("harpoon.ui").nav_file(3) end, { desc = '[H]arpoon: Nav 3' })
+vim.keymap.set({ 'n' }, '<C-h>;', function() require("harpoon.ui").nav_file(4) end, { desc = '[H]arpoon: Nav 4' })
+vim.keymap.set({ 'n' }, '<C-h>n', require("harpoon.ui").nav_next, { desc = '[H]arpoon: [N]ext' })
+vim.keymap.set({ 'n' }, '<C-h>p', require("harpoon.ui").nav_prev, { desc = '[H]arpoon: [P]revious' })
+
+vim.api.nvim_create_user_command(
+  "SnippetsReload",
+  function()
+    vim.cmd.source("~/.config/nvim/after/plugin/luasnip.lua")
+  end,
+  { }
+)
+vim.api.nvim_create_user_command(
+  "DapLoadLaunchJs",
+  function()
+    require("dap.ext.vscode").load_launchjs(nil, {
+      coreclr = { "cs" }
+    })
+  end,
+  { desc = "Esse eh o correto" }
+)
+vim.api.nvim_create_user_command(
+  "DapBreakOnExceptions",
+  function()
+    require("dap").set_exception_breakpoints()
+  end,
+  { desc = "Bota quebrar em exceptions" }
+)
+
+vim.cmd.colorscheme "tokyonight-moon"
+
+-- não funciona pra buffer específico =\
+vim.o.colorcolumn = "120"
+----------------------------------------------------------------------
+----------------------------------------------------------------------
+----------------------------------------------------------------------
+
 -- Keymaps for better default experience
 -- See `:help vim.keymap.set()`
 vim.keymap.set({ 'n', 'v' }, '<Space>', '<Nop>', { silent = true })
@@ -321,8 +370,10 @@ vim.keymap.set('n', 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = tr
 vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
 
 -- Diagnostic keymaps
-vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous diagnostic message' })
-vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next diagnostic message' })
+--vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous diagnostic message' })
+--vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next diagnostic message' })
+vim.keymap.set('n', '[d', function() vim.diagnostic.goto_prev({ severity = { min = vim.diagnostic.severity.INFO } }) end, { desc = "Go to previous diagnostic message" })
+vim.keymap.set('n', ']d', function() vim.diagnostic.goto_next({ severity = { min = vim.diagnostic.severity.INFO } }) end, { desc = "Go to next diagnostic message" })
 vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Open floating diagnostic message' })
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostics list' })
 
@@ -493,7 +544,22 @@ end, 0)
 
 -- [[ Configure LSP ]]
 --  This function gets run when an LSP connects to a particular buffer.
-local on_attach = function(_, bufnr)
+local on_attach = function(ev, bufnr)
+  -- adaptado daqui https://github.com/OmniSharp/omnisharp-roslyn/issues/2483#issuecomment-1539809155 
+  if ev.name == 'omnisharp' then
+    local function toSnakeCase(str)
+      return string.gsub(str, "%s*[- ]%s*", "_")
+    end
+    local tokenModifiers = ev.server_capabilities.semanticTokensProvider.legend.tokenModifiers
+    for i, v in ipairs(tokenModifiers) do
+      tokenModifiers[i] = toSnakeCase(v)
+    end
+    local tokenTypes = ev.server_capabilities.semanticTokensProvider.legend.tokenTypes
+    for i, v in ipairs(tokenTypes) do
+      tokenTypes[i] = toSnakeCase(v)
+    end
+  end
+
   -- NOTE: Remember that lua is a real programming language, and as such it is possible
   -- to define small helper and utility functions so you don't have to repeat yourself
   -- many times.
@@ -592,6 +658,42 @@ require('neodev').setup()
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
 
+-- function lsp.with(handler, override_config)
+--   return function(err, result, ctx, config)
+--     return handler(err, result, ctx, vim.tbl_deep_extend('force', config or {}, override_config))
+--   end
+-- end
+local my_mega_conf = {
+  signs = {
+    severity = { min = vim.diagnostic.severity.INFO }
+  },
+  virtual_text = {
+    severity = { min = vim.diagnostic.severity.INFO }
+  },
+  underline = {
+    severity = { min = vim.diagnostic.severity.INFO }
+  },
+}
+
+vim.lsp.handlers["textDocument/publishDiagnostics"] = function(err, result, ctx, config)
+  local client = vim.lsp.get_client_by_id(ctx.client_id)
+  if client.name == "omnisharp" then
+    config = vim.tbl_deep_extend('force', config or {}, my_mega_conf)
+  end
+  return vim.lsp.diagnostic.on_publish_diagnostics(err, result, ctx, config)
+end
+
+-- vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
+--   vim.lsp.diagnostic.on_publish_diagnostics, {
+--     signs = {
+--       severity_limit = "Hint",
+--     },
+--     virtual_text = {
+--       severity_limit = "Warning",
+--     },
+--   }
+-- )
+
 -- Ensure the servers above are installed
 local mason_lspconfig = require 'mason-lspconfig'
 
@@ -659,6 +761,7 @@ cmp.setup {
     { name = 'nvim_lsp' },
     { name = 'luasnip' },
     { name = 'path' },
+    { name = 'nvim_lsp_signature_help' }
   },
 }
 
