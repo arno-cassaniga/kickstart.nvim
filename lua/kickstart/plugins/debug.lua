@@ -32,13 +32,37 @@ return {
 
       -- You can provide additional configuration to the handlers,
       -- see mason-nvim-dap README for more information
-      handlers = {},
+      handlers = {
+        coreclr = function(config)
+          --tem que ajustar essa bosta
+          -- https://github.com/jay-babu/mason-nvim-dap.nvim/blob/main/lua/mason-nvim-dap/mappings/configurations.lua
+          local problematic_config = vim.tbl_filter(function(it)
+            return it.name == "NetCoreDbg: Launch"
+          end, config.configurations)[1]
+
+          if not problematic_config then
+            error("where is the problematic config?")
+          end
+
+          problematic_config.cwd = "${workspaceFolder}"
+          problematic_config.program = function ()
+            local p = vim.fn.input({ prompt = "DLL:", completion = "file" })
+            if not p or string.len(p) < 1 then
+              error("nevermind then...")
+            end
+            return p
+          end
+
+          require('mason-nvim-dap').default_setup(config)
+        end
+      },
 
       -- You'll need to check that you have the required things installed
       -- online, please don't ask me how to install them :)
       ensure_installed = {
         -- Update this to ensure that you have the debuggers for the langs you want
         'delve',
+        'netcoredbg'
       },
     }
 
