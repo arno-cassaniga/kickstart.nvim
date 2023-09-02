@@ -116,12 +116,6 @@ require('lazy').setup({
       },
     },
   },
-
-  { -- Theme inspired by Atom
-    'navarasu/onedark.nvim',
-    priority = 1000,
-  },
-
   { -- Set lualine as statusline
     'nvim-lualine/lualine.nvim',
     -- See `:help lualine.txt`
@@ -192,6 +186,11 @@ require('lazy').setup({
 -- [[ Setting options ]]
 -- See `:help vim.o`
 
+-- a config defult de 8 tabs me incomoda profundamente...
+vim.o.tabstop = 4
+-- vim.o.softtabstop = 4
+vim.o.shiftwidth = 4
+
 -- Set highlight on search
 vim.o.hlsearch = false
 
@@ -239,8 +238,11 @@ vim.keymap.set({ 'n' }, '<leader>to', '<Cmd>NvimTreeToggle<cr>', { desc = 'Toggl
 vim.keymap.set({ 'n' }, '<leader>py', '<Cmd>let @+ = expand("%:t")<cr>', { desc = '[P]ath [y]anking to clipboard' })
 vim.keymap.set({ 'n' }, '<leader>pY', '<Cmd>let @+ = expand("%")<cr>', { desc = '[P]ath [Y]anking (full) to clipboard' })
 
-vim.keymap.set({ 'n' }, 'gp', '`[v`]', { desc = '[G]o to last [P]asted text in visual mode' })
 vim.keymap.set({ 'i' }, '<C-j>', '<C-[>', { desc = 'Exit INSERT mode' })
+
+vim.keymap.set({ 'n' }, '<leader>qq', function() require("persistence").load() end, { desc = 'Restore nvim session for current direction' })
+vim.keymap.set({ 'n' }, '<leader>ql', function() require("persistence").load({ last = true }) end, { desc = 'Restore last nvim session' })
+vim.keymap.set({ 'n' }, '<leader>qd', function() require("persistence").stop() end, { desc = 'Disable session persistence on exit' })
 
 vim.keymap.set({ 'n' }, '<C-h>a', require("harpoon.mark").add_file, { desc = '[H]arpoon [A]dd file' })
 vim.keymap.set({ 'n' }, '<C-h>h', require("harpoon.ui").toggle_quick_menu, { desc = '[H]arpoon Open' })
@@ -407,7 +409,7 @@ require('nvim-treesitter.configs').setup {
 vim.keymap.set('n', '[d', function() vim.diagnostic.goto_prev({ severity = { min = vim.diagnostic.severity.INFO } }) end, { desc = "Go to previous diagnostic message" })
 vim.keymap.set('n', ']d', function() vim.diagnostic.goto_next({ severity = { min = vim.diagnostic.severity.INFO } }) end, { desc = "Go to next diagnostic message" })
 vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = "Open floating diagnostic message" })
-vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = "Open diagnostics list" })
+vim.keymap.set('n', '<leader>E', vim.diagnostic.setloclist, { desc = "Open diagnostics list" })
 
 -- LSP settings.
 --  This function gets run when an LSP connects to a particular buffer.
@@ -555,6 +557,34 @@ local luasnip = require 'luasnip'
 
 luasnip.config.setup {}
 
+--- dumb hack so hitting enter doesn't confirm the autocomplete in some annoying situations
+local original_cmp_cr_mapping = cmp.mapping.confirm {
+  behavior = cmp.ConfirmBehavior.Replace,
+  select = true,
+}
+local modified_cmp_cr_mapping = function(fallback)
+  local suppress = false
+  local no_explicit_selection = cmp.visible and cmp.get_selected_entry() and not cmp.get_active_entry()
+
+  if no_explicit_selection then
+    local curr_col = vim.api.nvim_win_get_cursor(0)[2] + 1
+
+    if curr_col > 1 then
+      local curr_line = vim.api.nvim_get_current_line()
+      local last_ch = string.sub(curr_line, curr_col - 1, curr_col - 1)
+
+      -- why do I feel this part won't stay this simple forever? =x
+      suppress = last_ch == "," or last_ch == "{"
+    end
+  end
+
+  if suppress then
+    fallback()
+  else
+    original_cmp_cr_mapping(fallback)
+  end
+end
+
 cmp.setup {
   snippet = {
     expand = function(args)
@@ -565,10 +595,7 @@ cmp.setup {
     ['<C-d>'] = cmp.mapping.scroll_docs(-4),
     ['<C-f>'] = cmp.mapping.scroll_docs(4),
     ['<C-Space>'] = cmp.mapping.complete {},
-    ['<CR>'] = cmp.mapping.confirm {
-      behavior = cmp.ConfirmBehavior.Replace,
-      select = true,
-    },
+    ['<CR>'] = modified_cmp_cr_mapping,
     ['<Tab>'] = cmp.mapping(function(fallback)
       if cmp.visible() then
         cmp.select_next_item()

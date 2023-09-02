@@ -4,6 +4,13 @@
 -- See the kickstart.nvim README for more information
 return {
 	{
+		"folke/persistence.nvim",
+		event = "BufReadPre", -- this will only start session saving when an actual file was opened
+		config = function()
+			require("persistence").setup();
+		end
+	},
+	{
 		"nvim-tree/nvim-tree.lua",
 		version = "*",
 		dependencies = {
@@ -13,26 +20,32 @@ return {
 			require("nvim-tree").setup {}
 		end,
 	},
+	{ "ThePrimeagen/harpoon" },
+	{ "jiangmiao/auto-pairs" },
 	-- some colorschemes
 	{
-		"rose-pine/neovim", name = "rose-pine"
+		-- Theme inspired by Atom
+		'navarasu/onedark.nvim',
+		priority = 1000,
 	},
 	{
-		"rebelot/kanagawa.nvim"
+		"rose-pine/neovim",
+		name = "rose-pine",
+		priority = 1000,
 	},
 	{
-		"folke/tokyonight.nvim"
+		"rebelot/kanagawa.nvim",
+		priority = 1000,
 	},
 	{
-		"Mofiqul/dracula.nvim"
+		"folke/tokyonight.nvim",
+		priority = 1000,
+		opts = {
+			transparent = true
+		}
 	},
-	-- vamo ver se a hype ajuda
 	{
-		"ThePrimeagen/harpoon"
+		"Mofiqul/dracula.nvim",
+		priority = 1000,
 	},
-	-- vamo ver se a hype ajuda
-	{
-		"jiangmiao/auto-pairs"
-	}
 }
-
