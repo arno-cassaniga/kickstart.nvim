@@ -22,6 +22,10 @@ return {
 	},
 	{ "ThePrimeagen/harpoon" },
 	{ "jiangmiao/auto-pairs" },
+	{
+		  'stevearc/dressing.nvim',
+		  opts = {},
+	},
 	-- some colorschemes
 	{
 		-- Theme inspired by Atom
