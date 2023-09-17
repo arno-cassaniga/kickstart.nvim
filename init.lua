@@ -264,6 +264,8 @@ vim.o.termguicolors = true
 -- [[ Basic Keymaps ]]
 
 -- these are MY KEYMAPS
+vim.keymap.set({ 'v' }, '<leader>f', function() vim.lsp.buf.format() end, { desc = '[F]ormat the selection' })
+vim.keymap.set({ 'n' }, '<leader>l', function() vim.cmd.edit("~/.config/nvim/init.lua") end, { desc = 'Edit the [L]ua config file (nvim/init.lua)' })
 vim.keymap.set({ 'n' }, '<leader>tt', '<Cmd>NvimTreeFindFileToggle<cr>', { desc = '[T]oggles Nvim[T]ree focusing the file' })
 vim.keymap.set({ 'n' }, '<leader>to', '<Cmd>NvimTreeToggle<cr>', { desc = 'Toggles Nvim[T]ree but only [O]pens it' })
 
