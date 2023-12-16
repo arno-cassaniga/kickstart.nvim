@@ -10,11 +10,9 @@ local scan = require("plenary.scandir")
 local function suggest_namespace()
   local curr_file = path:new(vim.fn.expand("%:p"))
   local parents = curr_file:parents()
-  print(vim.inspect(parents))
 
   local ns_parts = {}
   for _, filename in ipairs(parents) do
-    print(vim.inspect(filename))
     local short_name = table.remove(
       vim.split(filename, curr_file.path.sep, { plain = true, trimempty = true })
     )

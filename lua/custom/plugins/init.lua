@@ -21,7 +21,11 @@ return {
 		end,
 	},
 	{ "ThePrimeagen/harpoon" },
-	{ "jiangmiao/auto-pairs" },
+	{
+		'windwp/nvim-autopairs',
+		event = "InsertEnter",
+		opts = {} -- this is equalent to setup({}) function
+	},
 	{
 		  'stevearc/dressing.nvim',
 		  opts = {},

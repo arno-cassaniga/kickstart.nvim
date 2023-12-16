@@ -355,6 +355,11 @@ vim.api.nvim_create_user_command(
   end,
   { desc = "Bota quebrar em exceptions" }
 )
+vim.api.nvim_create_user_command(
+  "BufferCleanup",
+  "%bd | e# | bd #",
+  { desc = "Perform cleanup on open buffers" }
+)
 
 vim.cmd.colorscheme "tokyonight-moon"
 
@@ -548,21 +553,6 @@ end, 0)
 -- [[ Configure LSP ]]
 --  This function gets run when an LSP connects to a particular buffer.
 local on_attach = function(ev, bufnr)
-  -- adaptado daqui https://github.com/OmniSharp/omnisharp-roslyn/issues/2483#issuecomment-1539809155 
-  if ev.name == 'omnisharp' then
-    local function toSnakeCase(str)
-      return string.gsub(str, "%s*[- ]%s*", "_")
-    end
-    local tokenModifiers = ev.server_capabilities.semanticTokensProvider.legend.tokenModifiers
-    for i, v in ipairs(tokenModifiers) do
-      tokenModifiers[i] = toSnakeCase(v)
-    end
-    local tokenTypes = ev.server_capabilities.semanticTokensProvider.legend.tokenTypes
-    for i, v in ipairs(tokenTypes) do
-      tokenTypes[i] = toSnakeCase(v)
-    end
-  end
-
   -- NOTE: Remember that lua is a real programming language, and as such it is possible
   -- to define small helper and utility functions so you don't have to repeat yourself
   -- many times.
@@ -637,11 +627,13 @@ require('mason-lspconfig').setup()
 --  If you want to override the default filetypes that your language server will attach to you can
 --  define the property 'filetypes' to the map in question.
 local servers = {
-  -- clangd = {},
+  clangd = {},
   -- gopls = {},
   -- pyright = {},
-  -- rust_analyzer = {},
-  -- tsserver = {},
+  rust_analyzer = {},
+  tsserver = {},
+  svelte = {},
+  omnisharp = {},
   -- html = { filetypes = { 'html', 'twig', 'hbs'} },
 
   lua_ls = {
