@@ -247,7 +247,11 @@ require('lazy').setup({
     },
     build = ':TSUpdate',
   },
-
+  {
+    'mrcjkb/rustaceanvim',
+    version = '^3', -- Recommended
+    ft = { 'rust' },
+  },
   -- NOTE: Next Step on Your Neovim Journey: Add/Configure additional "plugins" for kickstart
   --       These are some example plugins that I've included in the kickstart repository.
   --       Uncomment any of the lines below to enable them.
@@ -267,6 +271,7 @@ require('lazy').setup({
 -- See `:help vim.o`
 -- NOTE: You can change these options as you wish!
 
+vim.o.relativenumber = true
 -- a config defult de 8 tabs me incomoda profundamente...
 vim.o.tabstop = 4
 -- vim.o.softtabstop = 4
@@ -320,6 +325,7 @@ vim.keymap.set({ 'n' }, '<leader>to', '<Cmd>NvimTreeToggle<cr>', { desc = 'Toggl
 vim.keymap.set({ 'n' }, '<leader>py', '<Cmd>let @+ = expand("%:t")<cr>', { desc = '[P]ath [y]anking to clipboard' })
 vim.keymap.set({ 'n' }, '<leader>pY', '<Cmd>let @+ = expand("%")<cr>', { desc = '[P]ath [Y]anking (full) to clipboard' })
 
+vim.keymap.set({ 'n' }, 'gp', '`[v`]', { desc = '[G]o to last [P]asted text in visual mode' })
 vim.keymap.set({ 'i' }, '<C-j>', '<C-[>', { desc = 'Exit INSERT mode' })
 
 vim.keymap.set({ 'n' }, '<leader>qq', function() require("persistence").load() end, { desc = 'Restore nvim session for current directory' })
@@ -386,7 +392,7 @@ vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = tr
 vim.keymap.set('n', '[d', function() vim.diagnostic.goto_prev({ severity = { min = vim.diagnostic.severity.INFO } }) end, { desc = "Go to previous diagnostic message" })
 vim.keymap.set('n', ']d', function() vim.diagnostic.goto_next({ severity = { min = vim.diagnostic.severity.INFO } }) end, { desc = "Go to next diagnostic message" })
 vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Open floating diagnostic message' })
-vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostics list' })
+vim.keymap.set('n', '<leader>E', vim.diagnostic.setloclist, { desc = 'Open diagnostics list' })
 
 -- [[ Highlight on yank ]]
 -- See `:help vim.highlight.on_yank()`
@@ -496,7 +502,7 @@ vim.defer_fn(function()
     -- You can specify additional Treesitter modules here: -- For example: -- playground = {--enable = true,-- },
     modules = {},
     highlight = { enable = true },
-    indent = { enable = true },
+    indent = { enable = false },
     incremental_selection = {
       enable = true,
       keymaps = {
@@ -633,7 +639,7 @@ local servers = {
   clangd = {},
   -- gopls = {},
   -- pyright = {},
-  rust_analyzer = {},
+  -- rust_analyzer = {},
   tsserver = {},
   svelte = {},
   omnisharp = {},
@@ -708,6 +714,13 @@ mason_lspconfig.setup_handlers {
       filetypes = (servers[server_name] or {}).filetypes,
     }
   end,
+  rust_analyzer = function() end
+}
+
+vim.g.rustaceanvim = {
+  server = {
+    on_attach = on_attach
+  }
 }
 
 -- [[ Configure nvim-cmp ]]
