@@ -91,7 +91,7 @@ vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
 -- Set to true if you have a Nerd Font installed
-vim.g.have_nerd_font = false
+vim.g.have_nerd_font = true
 
 -- [[ Setting options ]]
 -- See `:help vim.opt`
@@ -102,7 +102,15 @@ vim.g.have_nerd_font = false
 vim.opt.number = true
 -- You can also add relative line numbers, for help with jumping.
 --  Experiment for yourself to see if you like it!
--- vim.opt.relativenumber = true
+vim.opt.relativenumber = true
+
+-- a config defult de 8 tabs me incomoda profundamente...
+vim.o.tabstop = 4
+-- vim.o.softtabstop = 4
+vim.o.shiftwidth = 4
+
+-- não funciona pra buffer específico =\
+vim.o.colorcolumn = "120"
 
 -- Enable mouse mode, can be useful for resizing splits for example!
 vim.opt.mouse = 'a'
@@ -159,10 +167,16 @@ vim.opt.hlsearch = true
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 
 -- Diagnostic keymaps
-vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous [D]iagnostic message' })
-vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next [D]iagnostic message' })
+-- vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous [D]iagnostic message' })
+-- vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next [D]iagnostic message' })
+vim.keymap.set('n', '[d', function()
+  vim.diagnostic.goto_prev { severity = { min = vim.diagnostic.severity.INFO } }
+end, { desc = 'Go to previous [D]iagnostic message' })
+vim.keymap.set('n', ']d', function()
+  vim.diagnostic.goto_next { severity = { min = vim.diagnostic.severity.INFO } }
+end, { desc = 'Go to next [D]iagnostic message' })
 vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Show diagnostic [E]rror messages' })
-vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
+vim.keymap.set('n', '<leader>E', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
 
 -- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
 -- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which
@@ -182,10 +196,35 @@ vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' }
 --  Use CTRL+<hjkl> to switch between windows
 --
 --  See `:help wincmd` for a list of all window commands
-vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left window' })
-vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
-vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
-vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
+-- vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left window' })
+-- vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
+-- vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
+-- vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
+
+-- these are MY KEYMAPS
+vim.keymap.set({ 'v' }, '<leader>f', function() vim.lsp.buf.format() end, { desc = '[F]ormat the selection' })
+vim.keymap.set({ 'n' }, '<leader>l', function() vim.cmd.edit("~/.config/nvim/init.lua") end, { desc = 'Edit the [L]ua config file (nvim/init.lua)' })
+vim.keymap.set({ 'n' }, '<leader>tt', '<Cmd>NvimTreeFindFileToggle<cr>', { desc = '[T]oggles Nvim[T]ree focusing the file' })
+vim.keymap.set({ 'n' }, '<leader>to', '<Cmd>NvimTreeToggle<cr>', { desc = 'Toggles Nvim[T]ree but only [O]pens it' })
+
+vim.keymap.set({ 'n' }, '<leader>py', '<Cmd>let @+ = expand("%:t")<cr>', { desc = '[P]ath [y]anking to clipboard' })
+vim.keymap.set({ 'n' }, '<leader>pY', '<Cmd>let @+ = expand("%")<cr>', { desc = '[P]ath [Y]anking (full) to clipboard' })
+
+vim.keymap.set({ 'n' }, 'gp', '`[v`]', { desc = '[G]o to last [P]asted text in visual mode' })
+vim.keymap.set({ 'i' }, '<C-j>', '<C-[>', { desc = 'Exit INSERT mode' })
+
+vim.keymap.set({ 'n' }, '<C-h>a', function() require("harpoon.mark").add_file() end, { desc = '[H]arpoon [A]dd file' })
+vim.keymap.set({ 'n' }, '<C-h>h', function() require("harpoon.ui").toggle_quick_menu() end, { desc = '[H]arpoon Open' })
+vim.keymap.set({ 'n' }, '<C-h>j', function() require("harpoon.ui").nav_file(1) end, { desc = '[H]arpoon: Nav 1' })
+vim.keymap.set({ 'n' }, '<C-h>k', function() require("harpoon.ui").nav_file(2) end, { desc = '[H]arpoon: Nav 2' })
+vim.keymap.set({ 'n' }, '<C-h>l', function() require("harpoon.ui").nav_file(3) end, { desc = '[H]arpoon: Nav 3' })
+vim.keymap.set({ 'n' }, '<C-h>;', function() require("harpoon.ui").nav_file(4) end, { desc = '[H]arpoon: Nav 4' })
+vim.keymap.set({ 'n' }, '<C-h>n', function() require("harpoon.ui").nav_next() end, { desc = '[H]arpoon: [N]ext' })
+vim.keymap.set({ 'n' }, '<C-h>p', function() require("harpoon.ui").nav_prev() end, { desc = '[H]arpoon: [P]revious' })
+
+vim.keymap.set({ 'n' }, '<leader>qq', function() require("persistence").load() end, { desc = 'Restore nvim session for current directory' })
+vim.keymap.set({ 'n' }, '<leader>ql', function() require("persistence").load({ last = true }) end, { desc = 'Restore last nvim session' })
+vim.keymap.set({ 'n' }, '<leader>qd', function() require("persistence").stop() end, { desc = 'Disable session persistence on exit' })
 
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
@@ -200,6 +239,36 @@ vim.api.nvim_create_autocmd('TextYankPost', {
     vim.highlight.on_yank()
   end,
 })
+
+vim.api.nvim_create_user_command(
+  "SnippetsReload",
+  function()
+    vim.cmd.source("~/.config/nvim/after/plugin/luasnip.lua")
+  end,
+  { }
+)
+vim.api.nvim_create_user_command(
+  "DapLoadLaunchJs",
+  function()
+    require("dap.ext.vscode").load_launchjs(nil, {
+      coreclr = { "cs" }
+    })
+  end,
+  { desc = "Esse eh o correto" }
+)
+vim.api.nvim_create_user_command(
+  "DapBreakOnExceptions",
+  function()
+    require("dap").set_exception_breakpoints()
+  end,
+  { desc = "Bota quebrar em exceptions" }
+)
+
+vim.api.nvim_create_user_command(
+  "BufferCleanup",
+  "%bd | e# | bd #",
+  { desc = "Perform cleanup on open buffers" }
+)
 
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
@@ -222,6 +291,11 @@ vim.opt.rtp:prepend(lazypath)
 --
 -- NOTE: Here is where you install your plugins.
 require('lazy').setup({
+  {
+    'mrcjkb/rustaceanvim',
+    version = '^3', -- Recommended
+    ft = { 'rust' },
+  },
   -- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
   'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
 
@@ -314,9 +388,6 @@ require('lazy').setup({
         end,
       },
       { 'nvim-telescope/telescope-ui-select.nvim' },
-
-      -- Useful for getting pretty icons, but requires a Nerd Font.
-      { 'nvim-tree/nvim-web-devicons', enabled = vim.g.have_nerd_font },
     },
     config = function()
       -- Telescope is a fuzzy finder that comes with a lot of different things that
@@ -536,7 +607,7 @@ require('lazy').setup({
       --  - settings (table): Override the default settings passed when initializing the server.
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       local servers = {
-        -- clangd = {},
+        clangd = {},
         -- gopls = {},
         -- pyright = {},
         -- rust_analyzer = {},
@@ -546,7 +617,9 @@ require('lazy').setup({
         --    https://github.com/pmizio/typescript-tools.nvim
         --
         -- But for many setups, the LSP (`tsserver`) will work just fine
-        -- tsserver = {},
+        tsserver = {},
+        svelte = {},
+        omnisharp = {},
         --
 
         lua_ls = {
@@ -591,8 +664,31 @@ require('lazy').setup({
             server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
             require('lspconfig')[server_name].setup(server)
           end,
+          rust_analyzer = function() end --let rust tools drive everything
         },
       }
+
+      -- csharp can really be overly helpful with suggestions, so let's tone down the signaling for all those diagnostics
+      local custom_csharp_diag_config = {
+        signs = {
+          severity = { min = vim.diagnostic.severity.INFO }
+        },
+        virtual_text = {
+          severity = { min = vim.diagnostic.severity.INFO }
+        },
+        underline = {
+          severity = { min = vim.diagnostic.severity.INFO }
+        },
+      }
+
+      vim.lsp.handlers["textDocument/publishDiagnostics"] = function(err, result, ctx, config)
+        local client = vim.lsp.get_client_by_id(ctx.client_id)
+        if client.name == "omnisharp" then
+          config = vim.tbl_deep_extend('force', config or {}, custom_csharp_diag_config)
+        end
+        return vim.lsp.diagnostic.on_publish_diagnostics(err, result, ctx, config)
+      end
+
     end,
   },
 
@@ -600,10 +696,10 @@ require('lazy').setup({
     'stevearc/conform.nvim',
     opts = {
       notify_on_error = false,
-      format_on_save = {
-        timeout_ms = 500,
-        lsp_fallback = true,
-      },
+      -- format_on_save = {
+      --   timeout_ms = 500,
+      --   lsp_fallback = true,
+      -- },
       formatters_by_ft = {
         lua = { 'stylua' },
         -- Conform can also run multiple formatters sequentially
@@ -640,18 +736,49 @@ require('lazy').setup({
       --  into multiple repos for maintenance purposes.
       'hrsh7th/cmp-nvim-lsp',
       'hrsh7th/cmp-path',
+      'hrsh7th/cmp-nvim-lsp-signature-help',
 
       -- If you want to add a bunch of pre-configured snippets,
       --    you can use this plugin to help you. It even has snippets
       --    for various frameworks/libraries/etc. but you will have to
       --    set up the ones that are useful for you.
-      -- 'rafamadriz/friendly-snippets',
+      'rafamadriz/friendly-snippets',
     },
     config = function()
       -- See `:help cmp`
       local cmp = require 'cmp'
       local luasnip = require 'luasnip'
       luasnip.config.setup {}
+
+      --[[ IN CASE THINGS GET MESSY WITH THE CMP COMPLETION, WE CAN ENABLE THIS
+      --- dumb hack so hitting enter doesn't confirm the autocomplete in some annoying situations
+      local original_cmp_cr_mapping = cmp.mapping.confirm {
+        behavior = cmp.ConfirmBehavior.Replace,
+        select = true,
+      }
+      local modified_cmp_cr_mapping = function(fallback)
+        local suppress = false
+        local no_explicit_selection = cmp.visible and cmp.get_selected_entry() and not cmp.get_active_entry()
+
+        if no_explicit_selection then
+          local curr_col = vim.api.nvim_win_get_cursor(0)[2] + 1
+
+          if curr_col > 1 then
+            local curr_line = vim.api.nvim_get_current_line()
+            local last_ch = string.sub(curr_line, curr_col - 1, curr_col - 1)
+
+            -- why do I feel this part won't stay this simple forever? =x
+            suppress = last_ch == "," or last_ch == "{"
+          end
+        end
+
+        if suppress then
+          fallback()
+        else
+          original_cmp_cr_mapping(fallback)
+        end
+      end
+    --]]
 
       cmp.setup {
         snippet = {
@@ -674,7 +801,9 @@ require('lazy').setup({
           -- Accept ([y]es) the completion.
           --  This will auto-import if your LSP supports it.
           --  This will expand snippets if the LSP sent a snippet.
-          ['<C-y>'] = cmp.mapping.confirm { select = true },
+          -- ['<C-y>'] = cmp.mapping.confirm { select = true },
+          ['<CR>'] = cmp.mapping.confirm { select = true },
+          -- ['<CR>'] = modified_cmp_cr_mapping,
 
           -- Manually trigger a completion from nvim-cmp.
           --  Generally you don't need this, because nvim-cmp will display
@@ -704,6 +833,7 @@ require('lazy').setup({
           { name = 'nvim_lsp' },
           { name = 'luasnip' },
           { name = 'path' },
+          { name = 'nvim_lsp_signature_help' },
         },
       }
     end,
@@ -720,7 +850,7 @@ require('lazy').setup({
       -- Load the colorscheme here.
       -- Like many other themes, this one has different styles, and you could load
       -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
-      vim.cmd.colorscheme 'tokyonight-night'
+      vim.cmd.colorscheme 'tokyonight-moon'
 
       -- You can configure highlights by doing something like
       vim.cmd.hi 'Comment gui=none'
@@ -772,11 +902,11 @@ require('lazy').setup({
     'nvim-treesitter/nvim-treesitter',
     build = ':TSUpdate',
     opts = {
-      ensure_installed = { 'bash', 'c', 'html', 'lua', 'markdown', 'vim', 'vimdoc' },
+      ensure_installed = { 'bash', 'c', 'cpp', 'c_sharp', 'html', 'go', 'lua', 'markdown', 'python', 'rust', 'tsx', 'javascript', 'typescript', 'vim', 'vimdoc' },
       -- Autoinstall languages that are not installed
       auto_install = true,
       highlight = { enable = true },
-      indent = { enable = true },
+      indent = { enable = false }, -- "true" conflicts with rust tools (my guess)
     },
     config = function(_, opts)
       -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
@@ -802,7 +932,7 @@ require('lazy').setup({
   --  Here are some example plugins that I've included in the kickstart repository.
   --  Uncomment any of the lines below to enable them (you will need to restart nvim).
   --
-  -- require 'kickstart.plugins.debug',
+  require 'kickstart.plugins.debug',
   -- require 'kickstart.plugins.indent_line',
 
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
@@ -810,7 +940,7 @@ require('lazy').setup({
   --
   --  Uncomment the following line and add your plugins to `lua/custom/plugins/*.lua` to get going.
   --    For additional information, see `:help lazy.nvim-lazy.nvim-structuring-your-plugins`
-  -- { import = 'custom.plugins' },
+  { import = 'custom.plugins' },
 }, {
   ui = {
     -- If you have a Nerd Font, set icons to an empty table which will use the
