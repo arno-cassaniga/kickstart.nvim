@@ -160,6 +160,7 @@ return {
   -- NOTE: And you can specify dependencies as well
   dependencies = {
     -- Creates a beautiful debugger UI
+    'nvim-neotest/nvim-nio',
     'rcarriga/nvim-dap-ui',
 
     -- Installs the debug adapters for you
