@@ -90,27 +90,25 @@ P.S. You can delete this when you're done too. It's your config now! :)
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
--- Set to true if you have a Nerd Font installed
-vim.g.have_nerd_font = true
-
 -- [[ Setting options ]]
 -- See `:help vim.opt`
 -- NOTE: You can change these options as you wish!
 --  For more options, you can see `:help option-list`
 
--- Make line numbers default
+-------------- MY OPTIONS ------------------------------------------------------------
+vim.g.have_nerd_font = true
+
 vim.opt.number = true
--- You can also add relative line numbers, for help with jumping.
---  Experiment for yourself to see if you like it!
 vim.opt.relativenumber = true
 
 -- a config defult de 8 tabs me incomoda profundamente...
 vim.o.tabstop = 4
--- vim.o.softtabstop = 4
-vim.o.shiftwidth = 4
+vim.o.shiftwidth = 0 --pick from above
+vim.o.softtabstop = 0 --off
 
 -- não funciona pra buffer específico =\
 vim.o.colorcolumn = "120"
+--------------------------------------------------------------------------------------
 
 -- Enable mouse mode, can be useful for resizing splits for example!
 vim.opt.mouse = 'a'
@@ -166,18 +164,6 @@ vim.opt.scrolloff = 10
 vim.opt.hlsearch = true
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 
--- Diagnostic keymaps
--- vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous [D]iagnostic message' })
--- vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next [D]iagnostic message' })
-vim.keymap.set('n', '[d', function()
-  vim.diagnostic.goto_prev { severity = { min = vim.diagnostic.severity.INFO } }
-end, { desc = 'Go to previous [D]iagnostic message' })
-vim.keymap.set('n', ']d', function()
-  vim.diagnostic.goto_next { severity = { min = vim.diagnostic.severity.INFO } }
-end, { desc = 'Go to next [D]iagnostic message' })
-vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Show diagnostic [E]rror messages' })
-vim.keymap.set('n', '<leader>E', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
-
 -- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
 -- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which
 -- is not what someone will guess without a bit more experience.
@@ -186,45 +172,9 @@ vim.keymap.set('n', '<leader>E', vim.diagnostic.setloclist, { desc = 'Open diagn
 -- or just use <C-\><C-n> to exit terminal mode
 vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
 
--- TIP: Disable arrow keys in normal mode
--- vim.keymap.set('n', '<left>', '<cmd>echo "Use h to move!!"<CR>')
--- vim.keymap.set('n', '<right>', '<cmd>echo "Use l to move!!"<CR>')
--- vim.keymap.set('n', '<up>', '<cmd>echo "Use k to move!!"<CR>')
--- vim.keymap.set('n', '<down>', '<cmd>echo "Use j to move!!"<CR>')
-
--- Keybinds to make split navigation easier.
---  Use CTRL+<hjkl> to switch between windows
---
---  See `:help wincmd` for a list of all window commands
--- vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left window' })
--- vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
--- vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
--- vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
-
 -- these are MY KEYMAPS
-vim.keymap.set({ 'v' }, '<leader>f', function() vim.lsp.buf.format() end, { desc = '[F]ormat the selection' })
-vim.keymap.set({ 'n' }, '<leader>l', function() vim.cmd.edit("~/.config/nvim/init.lua") end, { desc = 'Edit the [L]ua config file (nvim/init.lua)' })
-vim.keymap.set({ 'n' }, '<leader>tt', '<Cmd>NvimTreeFindFileToggle<cr>', { desc = '[T]oggles Nvim[T]ree focusing the file' })
-vim.keymap.set({ 'n' }, '<leader>to', '<Cmd>NvimTreeToggle<cr>', { desc = 'Toggles Nvim[T]ree but only [O]pens it' })
-
-vim.keymap.set({ 'n' }, '<leader>py', '<Cmd>let @+ = expand("%:t")<cr>', { desc = '[P]ath [y]anking to clipboard' })
-vim.keymap.set({ 'n' }, '<leader>pY', '<Cmd>let @+ = expand("%")<cr>', { desc = '[P]ath [Y]anking (full) to clipboard' })
-
-vim.keymap.set({ 'n' }, 'gp', '`[v`]', { desc = '[G]o to last [P]asted text in visual mode' })
-vim.keymap.set({ 'i' }, '<C-j>', '<C-[>', { desc = 'Exit INSERT mode' })
-
-vim.keymap.set({ 'n' }, '<C-h>a', function() require("harpoon.mark").add_file() end, { desc = '[H]arpoon [A]dd file' })
-vim.keymap.set({ 'n' }, '<C-h>h', function() require("harpoon.ui").toggle_quick_menu() end, { desc = '[H]arpoon Open' })
-vim.keymap.set({ 'n' }, '<C-h>j', function() require("harpoon.ui").nav_file(1) end, { desc = '[H]arpoon: Nav 1' })
-vim.keymap.set({ 'n' }, '<C-h>k', function() require("harpoon.ui").nav_file(2) end, { desc = '[H]arpoon: Nav 2' })
-vim.keymap.set({ 'n' }, '<C-h>l', function() require("harpoon.ui").nav_file(3) end, { desc = '[H]arpoon: Nav 3' })
-vim.keymap.set({ 'n' }, '<C-h>;', function() require("harpoon.ui").nav_file(4) end, { desc = '[H]arpoon: Nav 4' })
-vim.keymap.set({ 'n' }, '<C-h>n', function() require("harpoon.ui").nav_next() end, { desc = '[H]arpoon: [N]ext' })
-vim.keymap.set({ 'n' }, '<C-h>p', function() require("harpoon.ui").nav_prev() end, { desc = '[H]arpoon: [P]revious' })
-
-vim.keymap.set({ 'n' }, '<leader>qq', function() require("persistence").load() end, { desc = 'Restore nvim session for current directory' })
-vim.keymap.set({ 'n' }, '<leader>ql', function() require("persistence").load({ last = true }) end, { desc = 'Restore last nvim session' })
-vim.keymap.set({ 'n' }, '<leader>qd', function() require("persistence").stop() end, { desc = 'Disable session persistence on exit' })
+require("custom.keymaps").setup()
+local csharp_goodies = require("custom.csharp_goodies")
 
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
@@ -239,36 +189,6 @@ vim.api.nvim_create_autocmd('TextYankPost', {
     vim.highlight.on_yank()
   end,
 })
-
-vim.api.nvim_create_user_command(
-  "SnippetsReload",
-  function()
-    vim.cmd.source("~/.config/nvim/after/plugin/luasnip.lua")
-  end,
-  { }
-)
-vim.api.nvim_create_user_command(
-  "DapLoadLaunchJs",
-  function()
-    require("dap.ext.vscode").load_launchjs(nil, {
-      coreclr = { "cs" }
-    })
-  end,
-  { desc = "Esse eh o correto" }
-)
-vim.api.nvim_create_user_command(
-  "DapBreakOnExceptions",
-  function()
-    require("dap").set_exception_breakpoints()
-  end,
-  { desc = "Bota quebrar em exceptions" }
-)
-
-vim.api.nvim_create_user_command(
-  "BufferCleanup",
-  "%bd | e# | bd #",
-  { desc = "Perform cleanup on open buffers" }
-)
 
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
@@ -326,6 +246,66 @@ require('lazy').setup({
         topdelete = { text = '‾' },
         changedelete = { text = '~' },
       },
+      on_attach = function(bufnr)
+        local gs = package.loaded.gitsigns
+
+        local function map(mode, l, r, opts)
+          opts = opts or {}
+          opts.buffer = bufnr
+          vim.keymap.set(mode, l, r, opts)
+        end
+
+        -- Navigation
+        map({ 'n', 'v' }, ']c', function()
+          if vim.wo.diff then
+            return ']c'
+          end
+          vim.schedule(function()
+            gs.next_hunk()
+          end)
+          return '<Ignore>'
+        end, { expr = true, desc = 'Jump to next hunk' })
+
+        map({ 'n', 'v' }, '[c', function()
+          if vim.wo.diff then
+            return '[c'
+          end
+          vim.schedule(function()
+            gs.prev_hunk()
+          end)
+          return '<Ignore>'
+        end, { expr = true, desc = 'Jump to previous hunk' })
+
+        -- Actions
+        -- visual mode
+        map('v', '<leader>hs', function()
+          gs.stage_hunk { vim.fn.line '.', vim.fn.line 'v' }
+        end, { desc = 'stage git hunk' })
+        map('v', '<leader>hr', function()
+          gs.reset_hunk { vim.fn.line '.', vim.fn.line 'v' }
+        end, { desc = 'reset git hunk' })
+        -- normal mode
+        map('n', '<leader>hs', gs.stage_hunk, { desc = 'git stage hunk' })
+        map('n', '<leader>hr', gs.reset_hunk, { desc = 'git reset hunk' })
+        map('n', '<leader>hS', gs.stage_buffer, { desc = 'git Stage buffer' })
+        map('n', '<leader>hu', gs.undo_stage_hunk, { desc = 'undo stage hunk' })
+        map('n', '<leader>hR', gs.reset_buffer, { desc = 'git Reset buffer' })
+        map('n', '<leader>hp', gs.preview_hunk, { desc = 'preview git hunk' })
+        map('n', '<leader>hb', function()
+          gs.blame_line { full = false }
+        end, { desc = 'git blame line' })
+        map('n', '<leader>hd', gs.diffthis, { desc = 'git diff against index' })
+        map('n', '<leader>hD', function()
+          gs.diffthis '~'
+        end, { desc = 'git diff against last commit' })
+
+        -- Toggles
+        map('n', '<leader>tb', gs.toggle_current_line_blame, { desc = 'toggle git blame line' })
+        map('n', '<leader>td', gs.toggle_deleted, { desc = 'toggle git show deleted' })
+
+        -- Text object
+        map({ 'o', 'x' }, 'ih', ':<C-U>Gitsigns select_hunk<CR>', { desc = 'select git hunk' })
+      end,
     },
   },
 
@@ -619,7 +599,9 @@ require('lazy').setup({
         -- But for many setups, the LSP (`tsserver`) will work just fine
         tsserver = {},
         svelte = {},
-        omnisharp = {},
+        omnisharp = {
+          handlers = csharp_goodies.lsp_handlers_overrides
+        },
         --
 
         lua_ls = {
@@ -667,28 +649,6 @@ require('lazy').setup({
           rust_analyzer = function() end --let rust tools drive everything
         },
       }
-
-      -- csharp can really be overly helpful with suggestions, so let's tone down the signaling for all those diagnostics
-      local custom_csharp_diag_config = {
-        signs = {
-          severity = { min = vim.diagnostic.severity.INFO }
-        },
-        virtual_text = {
-          severity = { min = vim.diagnostic.severity.INFO }
-        },
-        underline = {
-          severity = { min = vim.diagnostic.severity.INFO }
-        },
-      }
-
-      vim.lsp.handlers["textDocument/publishDiagnostics"] = function(err, result, ctx, config)
-        local client = vim.lsp.get_client_by_id(ctx.client_id)
-        if client.name == "omnisharp" then
-          config = vim.tbl_deep_extend('force', config or {}, custom_csharp_diag_config)
-        end
-        return vim.lsp.diagnostic.on_publish_diagnostics(err, result, ctx, config)
-      end
-
     end,
   },
 
@@ -836,24 +796,6 @@ require('lazy').setup({
           { name = 'nvim_lsp_signature_help' },
         },
       }
-    end,
-  },
-
-  { -- You can easily change to a different colorscheme.
-    -- Change the name of the colorscheme plugin below, and then
-    -- change the command in the config to whatever the name of that colorscheme is
-    --
-    -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`
-    'folke/tokyonight.nvim',
-    priority = 1000, -- make sure to load this before all the other start plugins
-    init = function()
-      -- Load the colorscheme here.
-      -- Like many other themes, this one has different styles, and you could load
-      -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
-      vim.cmd.colorscheme 'tokyonight-moon'
-
-      -- You can configure highlights by doing something like
-      vim.cmd.hi 'Comment gui=none'
     end,
   },
 

@@ -3,57 +3,29 @@
 --
 -- See the kickstart.nvim README for more information
 return {
-	{
-		"folke/persistence.nvim",
-		event = "BufReadPre", -- this will only start session saving when an actual file was opened
-		config = function()
-			require("persistence").setup();
-		end
-	},
-	{
-		"nvim-tree/nvim-tree.lua",
-		version = "*",
-		dependencies = {
-			"nvim-tree/nvim-web-devicons",
-		},
-		config = function()
-			require("nvim-tree").setup {}
-		end,
-	},
-	{ "ThePrimeagen/harpoon" },
-	{
-		'windwp/nvim-autopairs',
-		event = "InsertEnter",
-		opts = {} -- this is equalent to setup({}) function
-	},
-	{
-		  'stevearc/dressing.nvim',
-		  opts = {},
-	},
-	-- some colorschemes
-	{
-		-- Theme inspired by Atom
-		'navarasu/onedark.nvim',
-		priority = 1000,
-	},
-	{
-		"rose-pine/neovim",
-		name = "rose-pine",
-		priority = 1000,
-	},
-	{
-		"rebelot/kanagawa.nvim",
-		priority = 1000,
-	},
-	{
-		"folke/tokyonight.nvim",
-		priority = 1000,
-		opts = {
-			transparent = true
-		}
-	},
-	{
-		"Mofiqul/dracula.nvim",
-		priority = 1000,
-	},
+  'tpope/vim-fugitive',
+  {
+    'folke/persistence.nvim',
+    event = 'BufReadPre', -- this will only start session saving when an actual file was openedge
+    opts = {}
+  },
+  {
+    'nvim-tree/nvim-tree.lua',
+    version = '*',
+    dependencies = {
+      'nvim-tree/nvim-web-devicons',
+    },
+    opts = {}
+  },
+  { 'ThePrimeagen/harpoon' },
+  {
+    'windwp/nvim-autopairs',
+    event = 'InsertEnter',
+    opts = {}, -- this is equalent to setup({}) function
+  },
+  {
+    'stevearc/dressing.nvim',
+    opts = {},
+  },
 }
+-- vim: ts=2 sts=2 sw=2 et
